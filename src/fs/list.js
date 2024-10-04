@@ -1,4 +1,4 @@
-import { existsSync, readdir } from "fs";
+import { promises, existsSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
@@ -8,14 +8,15 @@ const __dirname = dirname(__filename);
 const sourceFolder = join(__dirname, "files");
 // console.log(sourceFolder);
 const list = async () => {
-  if (!existsSync(sourceFolder)) {
-    throw new Error("FS operation failed");
-  }
-
-  readdir(sourceFolder, (err, files) => {
-    if (err) throw err;
+  try {
+    if (!existsSync(sourceFolder)) {
+      throw new Error("FS operation failed");
+    }
+    const files = await promises.readdir(sourceFolder);
     files.forEach((el) => console.log(el));
-  });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 await list();

@@ -1,4 +1,4 @@
-import { existsSync, unlink } from "fs";
+import { promises, existsSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
@@ -7,11 +7,15 @@ const __dirname = dirname(__filename);
 const sourceFile = join(__dirname, "files", "fileToRemove.txt");
 
 const remove = async () => {
-  if (!existsSync(sourceFile)) {
-    throw new Error("FS operation failed");
-  }
+  try {
+    if (!existsSync(sourceFile)) {
+      throw new Error("FS operation failed");
+    }
 
-  unlink(sourceFile, (err) => err && console.log(err));
+    await promises.rm(sourceFile);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 await remove();

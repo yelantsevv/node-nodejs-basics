@@ -1,18 +1,22 @@
-import fs from "fs";
-import path from "path";
-import url from "url";
+import { promises, existsSync } from "fs";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 
-const __filename = url.fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const sourceFile = path.join(__dirname, "files", "wrongFilename.txt");
-const targetFile = path.join(__dirname, "files", "properFilename.md");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const sourceFile = join(__dirname, "files", "wrongFilename.txt");
+const targetFile = join(__dirname, "files", "properFilename.md");
 
 const rename = async () => {
-  if (fs.existsSync(targetFile) || !fs.existsSync(sourceFile)) {
-    throw new Error("FS operation failed");
-  }
+  try {
+    if (existsSync(targetFile) || !existsSync(sourceFile)) {
+      throw new Error("FS operation failed");
+    }
 
-  fs.rename(sourceFile, targetFile, (err) => err && console.log(err));
+    await promises.rename(sourceFile, targetFile);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 await rename();

@@ -1,23 +1,21 @@
-import { existsSync, readFile } from "fs";
-import path from "path";
-import { fileURLToPath } from 'url';
+import { promises, existsSync } from "fs";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const sourceFile = path.join(__dirname, 'files', 'fileToRead.txt');
+const __dirname = dirname(__filename);
+const sourceFile = join(__dirname, "files", "fileToRead.txt");
 
 const read = async () => {
+  try {
     if (!existsSync(sourceFile)) {
-        throw new Error('FS operation failed');
+      throw new Error("FS operation failed");
     }
-
-    readFile(sourceFile, 'utf-8', (err, data) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        console.log(data);
-    })
+    const readFile = await promises.readFile(sourceFile, { encoding: "utf8" });
+    console.log(readFile);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 await read();
